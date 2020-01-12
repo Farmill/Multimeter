@@ -18,6 +18,7 @@ namespace VIc8145Lib
         private static bool temperature = false;
         private static bool resistance;
         private static int adjustDecPos;
+        private static bool generator;
 
         public static string ParseUnits(byte[] toParse, DisplayData dispData)
         {
@@ -66,6 +67,7 @@ namespace VIc8145Lib
 
         private static string ParseSelect(int select, int mode, DisplayData d)
         {
+            generator = false;
             d.Unit2 = "";
             switch (select)
             {
@@ -102,7 +104,12 @@ namespace VIc8145Lib
                             d.Unit = "Hz";
                             d.Unit1 = "";
                             return "";
-
+                        case 0x4:
+                            //adjustDecPos = 1;
+                            d.Unit = "Hz";
+                            d.Unit1 = "Duty";
+                            generator = true;
+                            return "Generator";
                     }
 
                     break;
@@ -110,7 +117,7 @@ namespace VIc8145Lib
                     switch (mode)
                     {
                         case 0xE:
-                            d.Unit= "V";
+                            d.Unit = "V";
                             d.Unit1 = "Hz";
                             return "AC+DC";
                         case 0xF:
@@ -128,7 +135,7 @@ namespace VIc8145Lib
                             d.Unit = "A";
                             return "AC";
                         case 0xC:
-                            d.Unit = ">>>";
+                            d.Unit = "¯";
                             return "";
                         case 0x8:
                             d.Unit = "°C";
@@ -200,7 +207,7 @@ namespace VIc8145Lib
         public static DisplayData ParseMainDisplayData(DisplayData displayData, byte[] data)
         {
             //displayData.Unit = 
-                ParseUnits(data, displayData);
+            ParseUnits(data, displayData);
             displayData.Prefixis = ParsePrefix(data);
             displayData.Hold = ParseHold(data);
             displayData.Rel = ParseRel(data);
@@ -256,7 +263,72 @@ namespace VIc8145Lib
                     res += ".";
                 }
             }
+
+            if (generator)
+            {
+                res = AddDecimalPoint(data[2]);
+            }
             return res;
+        }
+
+        private static string AddDecimalPoint(byte res)
+        {
+            var result = "";
+            
+            switch (res)
+            {
+
+                case 0x80:
+                    result = "0.50000";
+                    break;
+                case 0x88 :
+                    result = "1.0000";
+                    break;
+                case 0x90 :
+                    result = "2.0000";
+                    break;
+                case 0x98 :
+                    result = "10.000";
+                    break;
+                case 0xA0 :
+                    result = "20.000";
+                    break;
+                case 0xA8 :
+                    result = "60.240";
+                    break;
+                case 0xB0 :
+                    result = "74.630";
+                    break;
+                case 0xB8 :
+                    result = "100.00";
+                    break;
+                case 0xC0 :
+                    result = "151.50";
+                    break;
+                case 0xC8 :
+                    result = "200.00";
+                    break;
+                case 0xD0 :
+                    result = "303.00";
+                    break;
+                case 0xD8 :
+                    result = "606.10";
+                    break;
+               case 0xE0 :
+                    result = "1.2500";
+                    break;
+                case 0xE8 :
+                    result = "1.6660";
+                    break;
+                case 0xF0 :
+                    result = "2.5000";
+                    break;
+                case 0xF8 :
+                    result = "5.0000";
+                    break;
+            }
+
+            return result;
         }
 
         private static int GetRange(byte[] data)
@@ -267,7 +339,7 @@ namespace VIc8145Lib
                 range++;                // Correct if temp. measurement
             }
 
-            if (resistance)
+            if (resistance || generator)
             {
                 switch (data[1] & 3)
                 {
@@ -296,6 +368,7 @@ namespace VIc8145Lib
             }
             return range + 1;
         }
+
 
         private static string ParserSign(byte[] result)
         {
