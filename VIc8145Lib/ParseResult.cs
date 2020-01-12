@@ -35,6 +35,7 @@ namespace VIc8145Lib
         private static string ParseSelect(int select, int mode, DisplayData d)
         {
             generator = false;
+            resistance = false;
             d.Unit2 = "";
             switch (select)
             {
@@ -43,31 +44,41 @@ namespace VIc8145Lib
                     {
                         case 0xE:
                             d.Unit1 = d.Unit = "V";
+                            d.Entities = EntitiesEnum.Voltage;
                             return "DC";
                         case 0xF:
                             d.Unit1 = d.Unit = "V";
+                            d.Entities = EntitiesEnum.Voltage;
                             return "AC";
                         case 0xD:
                             d.Unit1 = d.Unit = "mV";
+                            d.Entities = EntitiesEnum.Voltage;
                             return "DC";
                         case 0x6:
                             d.Unit1 = d.Unit = "mA";
+                            d.Entities = EntitiesEnum.Current;
                             return "DC";
                         case 0x5:
                             d.Unit = "A";
+                            d.Entities = EntitiesEnum.Current;
                             return "DC";
                         case 0xC:
                             d.Unit1 = d.Unit = "Ω";
+                            resistance = true;
+                            d.Entities = EntitiesEnum.Resistance;
                             return "";
                         case 0x9:
                             d.Unit1 = d.Unit = "F";
+                            d.Entities = EntitiesEnum.Capacity;
                             return "F";
                         case 0x8:
                             d.Unit = "°C";
                             d.Unit1 = "°F";
+                            d.Entities = EntitiesEnum.Temp;
                             temperature = true;
                             return "Temp";
                         case 0xA:
+                            d.Entities = EntitiesEnum.Frequency;
                             d.Unit = "Hz";
                             d.Unit1 = "";
                             return "";
@@ -76,6 +87,7 @@ namespace VIc8145Lib
                             d.Unit = "Hz";
                             d.Unit1 = "Duty";
                             generator = true;
+                            d.Entities = EntitiesEnum.Generator;
                             return "Generator";
                     }
 
@@ -102,7 +114,7 @@ namespace VIc8145Lib
                             d.Unit = "A";
                             return "AC";
                         case 0xC:
-                            d.Unit = "¯";
+                            d.Unit = ">>";
                             return "";
                         case 0x8:
                             d.Unit = "°C";
@@ -333,6 +345,7 @@ namespace VIc8145Lib
                 }
 
                 return range;
+
             }
             return range + 1;
         }

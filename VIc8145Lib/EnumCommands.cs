@@ -32,7 +32,8 @@
         Diode,
         Temp,
         Conductance,
-        Current
+        Current,
+        Generator
     }
 
     public enum VoltageEnum

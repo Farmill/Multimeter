@@ -91,7 +91,7 @@ namespace ViCi_VC8145
                  lblSelect.Text = measuredData.Select;
              }
 
-             //progressBar1.Value = Math.Min(measuredData.BarValue, 21);
+             progressBar1.Value = Math.Min(measuredData.BarValue, 21);
              lblAuto.Text = measuredData.Auto;
              lblHold.Text = measuredData.Hold;
              lblRel.Text = measuredData.Rel ? "REL" : "";
