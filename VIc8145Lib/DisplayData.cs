@@ -9,6 +9,7 @@ namespace VIc8145Lib
 {
     public class DisplayData
     {
+        public string Sign2nd;
         public string Unit { get; set; }
         public string MainDisplayValue { get; set; }
         public string SecondDisplayValue { get; set; }

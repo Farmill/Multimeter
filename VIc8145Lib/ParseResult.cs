@@ -20,7 +20,7 @@ namespace VIc8145Lib
         private static int adjustDecPos;
         private static bool generator;
 
-        public static string ParseUnits(byte[] toParse, DisplayData dispData)
+        public static void ParseUnits(byte[] toParse, DisplayData dispData)
         {
             temperature = false;
             resistance = false;
@@ -29,40 +29,7 @@ namespace VIc8145Lib
             var postfix = "";
 
             dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData);
-            return $"";
-
-            switch (mode)
-            {
-                case 0xE:
-                case 0xF:
-                    return "V";
-
-                case 0xD:
-                    adjustDecPos = 1;
-                    return "mV";
-                case 0x6:
-                    return "mA";
-                case 0x7:
-                    return "A";
-                case 0xC:
-                    resistance = true;
-                    return "Ω";
-                case 0xB:
-                    return "Diode";
-                case 0x8:
-                    dispData.Unit1 = "°C";
-                    dispData.Unit2 = "°F";
-                    temperature = true;
-                    return "temp";
-                case 0x9:
-                    return "Cap";
-                case 0xA:
-                    return "Hz";
-                case 0x4:
-                    return "Generator";
-                default:
-                    return "Unknown";
-            }
+           
         }
 
         private static string ParseSelect(int select, int mode, DisplayData d)
@@ -75,25 +42,25 @@ namespace VIc8145Lib
                     switch (mode)
                     {
                         case 0xE:
-                            d.Unit = "V";
+                            d.Unit1 = d.Unit = "V";
                             return "DC";
                         case 0xF:
-                            d.Unit = "V";
+                            d.Unit1 = d.Unit = "V";
                             return "AC";
                         case 0xD:
-                            d.Unit = "mV";
+                            d.Unit1 = d.Unit = "mV";
                             return "DC";
                         case 0x6:
-                            d.Unit = "mA";
+                            d.Unit1 = d.Unit = "mA";
                             return "DC";
                         case 0x5:
                             d.Unit = "A";
                             return "DC";
                         case 0xC:
-                            d.Unit = "Ω";
+                            d.Unit1 = d.Unit = "Ω";
                             return "";
                         case 0x9:
-                            d.Unit = "Cap";
+                            d.Unit1 = d.Unit = "F";
                             return "F";
                         case 0x8:
                             d.Unit = "°C";
@@ -154,7 +121,8 @@ namespace VIc8145Lib
                     {
                         case 0xE:
                             d.Unit1 = "Hz";
-                            return "dBm";
+                            d.Unit = "dBm";
+                            return "";
                         case 0xf:
                             d.Unit1 = "Hz";
                             d.Unit = "dBm";
@@ -375,10 +343,12 @@ namespace VIc8145Lib
             switch ((result[4] & 0b01110000) >> 4)
             {
                 default:
-                    return " ";
+                    return "+";
                 case 4:
+                    case 0:
                     return " ";
                 case 5:
+                case 1:
                     return "-";
             }
         }
@@ -402,12 +372,9 @@ namespace VIc8145Lib
 
                         return PrefixEnum.Mega;
                     }
-                    break;
 
                 case 2:
-
                     return PrefixEnum.Mega;
-                    break;
 
                 default:
                     return PrefixEnum.None;
@@ -462,8 +429,9 @@ namespace VIc8145Lib
 
             if (res == ".")
                 res = "";
-
+            
             displayData.SecondDisplayValue = res;
+            displayData.Sign2nd = res == "" ? "" : ParserSign(data);
             return displayData;
         }
 
