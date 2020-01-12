@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.MeterPanel = new System.Windows.Forms.Panel();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblMax = new System.Windows.Forms.Label();
             this.lblHold = new System.Windows.Forms.Label();
             this.lblRel = new System.Windows.Forms.Label();
@@ -41,12 +42,13 @@
             this.lblMainDisplay = new System.Windows.Forms.Label();
             this.lblSign = new System.Windows.Forms.Label();
             this.BrandModel = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblBarSign = new System.Windows.Forms.Label();
             this.MeterPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // MeterPanel
             // 
+            this.MeterPanel.Controls.Add(this.lblBarSign);
             this.MeterPanel.Controls.Add(this.progressBar1);
             this.MeterPanel.Controls.Add(this.lblMax);
             this.MeterPanel.Controls.Add(this.lblHold);
@@ -66,6 +68,17 @@
             this.MeterPanel.Size = new System.Drawing.Size(947, 457);
             this.MeterPanel.TabIndex = 0;
             this.MeterPanel.Visible = false;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(98, 326);
+            this.progressBar1.MarqueeAnimationSpeed = 1;
+            this.progressBar1.Maximum = 21;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(679, 48);
+            this.progressBar1.Step = 1;
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 12;
             // 
             // lblMax
             // 
@@ -110,7 +123,6 @@
             this.lblUnit2nd.Name = "lblUnit2nd";
             this.lblUnit2nd.Size = new System.Drawing.Size(139, 51);
             this.lblUnit2nd.TabIndex = 7;
-            this.lblUnit2nd.Text = "V";
             this.lblUnit2nd.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblSelect
@@ -181,12 +193,15 @@
             this.BrandModel.Text = "ViCi VC8145 companion";
             this.BrandModel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // progressBar1
+            // lblBarSign
             // 
-            this.progressBar1.Location = new System.Drawing.Point(98, 326);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(679, 48);
-            this.progressBar1.TabIndex = 12;
+            this.lblBarSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBarSign.Location = new System.Drawing.Point(21, 314);
+            this.lblBarSign.Name = "lblBarSign";
+            this.lblBarSign.Size = new System.Drawing.Size(57, 73);
+            this.lblBarSign.TabIndex = 13;
+            this.lblBarSign.Text = "+";
+            this.lblBarSign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Form1
             // 
@@ -219,6 +234,7 @@
         private System.Windows.Forms.Label lblAuto;
         private System.Windows.Forms.Label lblMax;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblBarSign;
     }
 }
 

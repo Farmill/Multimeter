@@ -41,7 +41,7 @@ namespace ViCi_VC8145
             {
                 MeterPanel.Visible = true;
             }
-            
+
             lblSign.Text = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
 
@@ -49,53 +49,45 @@ namespace ViCi_VC8145
             lblSign2nd.Text = measuredData.Sign2nd;
             lblDisplay2nd.Text = measuredData.SecondDisplayValue;
 
-            if (measuredData.Unit == "temp")
-             {
-                 lblUnitMain.Text = measuredData.Unit;
-                 lblUnit2nd.Text = measuredData.Unit2;
-             }
-             else
-             {
-                 if (measuredData.Entities == EntitiesEnum.Resistance)
-                 {
-                     switch (measuredData.Prefixis)
-                     {
-                         case PrefixEnum.Kilo:
-                             lblUnitMain.Text = "k" + measuredData.Unit;
-                             break;
-                         case PrefixEnum.Mega:
-                             lblUnitMain.Text = "M" + measuredData.Unit;
-                             break;
-                         case PrefixEnum.Micro:
-                             lblUnitMain.Text = "μ" + measuredData.Unit;
-                             break;
-                         case PrefixEnum.Milli:
-                             lblUnitMain.Text = "m" + measuredData.Unit;
-                             break;
-                         case PrefixEnum.Pica:
-                             lblUnitMain.Text = "p" + measuredData.Unit;
-                             break;
-                         default:
-                             lblUnitMain.Text = measuredData.Unit;
-                             break;
-                     }
+            if (measuredData.Entities == EntitiesEnum.Resistance)
+            {
+                switch (measuredData.Prefixis)
+                {
+                    case PrefixEnum.Kilo:
+                        lblUnitMain.Text = "k" + measuredData.Unit;
+                        break;
+                    case PrefixEnum.Mega:
+                        lblUnitMain.Text = "M" + measuredData.Unit;
+                        break;
+                    case PrefixEnum.Micro:
+                        lblUnitMain.Text = "μ" + measuredData.Unit;
+                        break;
+                    case PrefixEnum.Milli:
+                        lblUnitMain.Text = "m" + measuredData.Unit;
+                        break;
+                    case PrefixEnum.Pica:
+                        lblUnitMain.Text = "p" + measuredData.Unit;
+                        break;
+                    default:
+                        lblUnitMain.Text = measuredData.Unit;
+                        break;
+                }
 
-                 }
+            }
 
-                 else
-                 {
-                     lblUnitMain.Text = measuredData.Unit;
-                     lblUnit2nd.Text = measuredData.SecondDisplayValue == "" ? "" : measuredData.Unit1;
-                 }
+            else
+            {
+                lblUnitMain.Text = measuredData.Unit;
+                lblUnit2nd.Text = measuredData.SecondDisplayValue == "" ? "" : measuredData.Unit1;
+            }
 
-                 lblSelect.Text = measuredData.Select;
-             }
-
-             progressBar1.Value = Math.Min(measuredData.BarValue, 21);
-             lblAuto.Text = measuredData.Auto;
-             lblHold.Text = measuredData.Hold;
-             lblRel.Text = measuredData.Rel ? "REL" : "";
-             lblMax.Text = measuredData.MinMax;
+            lblSelect.Text = measuredData.Select;
+            lblBarSign.Text = measuredData.BarIsPositive ? "" : "-";
+            progressBar1.Value = Math.Min(measuredData.BarValue, 21);
+            lblAuto.Text = measuredData.Auto;
+            lblHold.Text = measuredData.Hold;
+            lblRel.Text = measuredData.Rel ? "REL" : "";
+            lblMax.Text = measuredData.MinMax;
 
         }
         private void DoWork()
@@ -118,7 +110,7 @@ namespace ViCi_VC8145
                     {
                         return;
                     }
-                    
+
                 }
                 else
                 {
