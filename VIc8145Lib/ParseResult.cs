@@ -28,11 +28,11 @@ namespace VIc8145Lib
             var mode = (toParse[1] & 0b0111_1000) >> 3;
             var postfix = "";
 
-            dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData);
+            dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData, toParse);
            
         }
 
-        private static string ParseSelect(int select, int mode, DisplayData d)
+        private static string ParseSelect(int select, int mode, DisplayData d, byte[] rawdata)
         {
             generator = false;
             resistance = false;
@@ -68,9 +68,18 @@ namespace VIc8145Lib
                             d.Entities = EntitiesEnum.Resistance;
                             return "";
                         case 0x9:
-                            d.Unit1 = d.Unit = "F";
+                            if (rawdata[2] != 0x98)
+                            {
+                                d.Unit1 = d.Unit = "nF";
+                            }
+                            else
+                            {
+                                d.Unit1 = d.Unit = "µF";
+                            }
+                            
                             d.Entities = EntitiesEnum.Capacity;
-                            return "F";
+                            
+                            return "Capacitor";
                         case 0x8:
                             d.Unit = "°C";
                             d.Unit1 = "°F";
@@ -89,6 +98,11 @@ namespace VIc8145Lib
                             generator = true;
                             d.Entities = EntitiesEnum.Generator;
                             return "Generator";
+                        case 0xb:
+                            d.Unit = "V";
+                            d.Unit1 = "";
+                            d.Entities = EntitiesEnum.Diode;
+                            return "Diode";
                     }
 
                     break;
@@ -418,7 +432,6 @@ namespace VIc8145Lib
                 decpos++;
             }
 
-
             var res = string.Empty;
             for (int i = 5; i < 10; i++)
             {
@@ -443,8 +456,23 @@ namespace VIc8145Lib
             if (res == ".")
                 res = "";
             
-            displayData.SecondDisplayValue = res;
             displayData.Sign2nd = res == "" ? "" : ParserSign(data);
+            if (displayData.Entities == EntitiesEnum.Diode)
+            {
+                if (Convert.ToDecimal(displayData.MainDisplayValue) > 2)
+                {
+                    res = "Open";
+                }
+                else
+                {
+                    res = "SHRT";
+                }
+
+                displayData.Sign2nd = "";
+            }
+            displayData.SecondDisplayValue = res;
+            
+            
             return displayData;
         }
 

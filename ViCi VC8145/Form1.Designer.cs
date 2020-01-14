@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.MeterPanel = new System.Windows.Forms.Panel();
+            this.lblBarSign = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblMax = new System.Windows.Forms.Label();
             this.lblHold = new System.Windows.Forms.Label();
@@ -42,7 +43,6 @@
             this.lblMainDisplay = new System.Windows.Forms.Label();
             this.lblSign = new System.Windows.Forms.Label();
             this.BrandModel = new System.Windows.Forms.Label();
-            this.lblBarSign = new System.Windows.Forms.Label();
             this.MeterPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,8 +69,19 @@
             this.MeterPanel.TabIndex = 0;
             this.MeterPanel.Visible = false;
             // 
+            // lblBarSign
+            // 
+            this.lblBarSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBarSign.Location = new System.Drawing.Point(21, 314);
+            this.lblBarSign.Name = "lblBarSign";
+            this.lblBarSign.Size = new System.Drawing.Size(57, 73);
+            this.lblBarSign.TabIndex = 13;
+            this.lblBarSign.Text = "+";
+            this.lblBarSign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // progressBar1
             // 
+            this.progressBar1.ForeColor = System.Drawing.SystemColors.GrayText;
             this.progressBar1.Location = new System.Drawing.Point(98, 326);
             this.progressBar1.MarqueeAnimationSpeed = 1;
             this.progressBar1.Maximum = 21;
@@ -192,16 +203,6 @@
             this.BrandModel.TabIndex = 0;
             this.BrandModel.Text = "ViCi VC8145 companion";
             this.BrandModel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblBarSign
-            // 
-            this.lblBarSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBarSign.Location = new System.Drawing.Point(21, 314);
-            this.lblBarSign.Name = "lblBarSign";
-            this.lblBarSign.Size = new System.Drawing.Size(57, 73);
-            this.lblBarSign.TabIndex = 13;
-            this.lblBarSign.Text = "+";
-            this.lblBarSign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Form1
             // 
