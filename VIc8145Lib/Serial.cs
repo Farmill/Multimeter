@@ -23,9 +23,12 @@ namespace VIc8145Lib
             return result;
         }
 
-        public static void ClosePort() => _port.Close();
+        public static void ClosePort()
+        {
+            _port.Close();
+        }
 
-        public static bool OpenPort(string portId, int timeout = 5000) 
+        public static bool OpenPort(string portId, int timeout = 5000)
         {
             _port = new SerialPort(portId, 9600, Parity.None, 8, StopBits.One);
             _maxWait = timeout;
@@ -37,7 +40,7 @@ namespace VIc8145Lib
 
         private static void PortOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort sp = (SerialPort)sender;
+            var sp = (SerialPort)sender;
             byte read;
             var index = 0;
             do

@@ -18,24 +18,38 @@ namespace VIc8145Lib
         private static bool temperature = false;
         private static bool resistance;
         private static int adjustDecPos;
+        private static int adjustDecPos2;
         private static bool generator;
+        private static bool isAC;
+        private static bool isOhm;
 
         public static void ParseUnits(byte[] toParse, DisplayData dispData)
         {
             temperature = false;
             resistance = false;
-            adjustDecPos = 0;
+            adjustDecPos = adjustDecPos2 = adjustDecPos2 = 0;
             var mode = (toParse[1] & 0b0111_1000) >> 3;
             var postfix = "";
 
             dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData, toParse);
-           
+            if (dispData.Select == "AC")
+            {
+                isAC = true;
+            }
+
+            if (dispData.Entities == EntitiesEnum.Resistance)
+            {
+                isOhm = true;
+            }
+
         }
 
         private static string ParseSelect(int select, int mode, DisplayData d, byte[] rawdata)
         {
             generator = false;
             resistance = false;
+            isAC = false;
+            d.ShowBar = true;
             d.Unit2 = "";
             switch (select)
             {
@@ -64,6 +78,7 @@ namespace VIc8145Lib
                             return "DC";
                         case 0xC:
                             d.Unit1 = d.Unit = "Ω";
+                            d.Unit2 = "Ω";
                             resistance = true;
                             d.Entities = EntitiesEnum.Resistance;
                             return "";
@@ -76,23 +91,26 @@ namespace VIc8145Lib
                             {
                                 d.Unit1 = d.Unit = "µF";
                             }
-                            
+                            d.ShowBar = false;
                             d.Entities = EntitiesEnum.Capacity;
-                            
+
                             return "Capacitor";
                         case 0x8:
                             d.Unit = "°C";
                             d.Unit1 = "°F";
                             d.Entities = EntitiesEnum.Temp;
                             temperature = true;
+                            d.ShowBar = false;
+                            adjustDecPos = adjustDecPos2 = 1;
                             return "Temp";
                         case 0xA:
                             d.Entities = EntitiesEnum.Frequency;
                             d.Unit = "Hz";
-                            d.Unit1 = "";
+                            d.Unit1 = "% duty";
+                            d.ShowBar = false;
                             return "";
                         case 0x4:
-                            //adjustDecPos = 1;
+                            //adjustDecPos =adjustDecPos2= 1;
                             d.Unit = "Hz";
                             d.Unit1 = "Duty";
                             generator = true;
@@ -118,6 +136,7 @@ namespace VIc8145Lib
                             d.Unit1 = "Hz";
                             return "AC";
                         case 0xD:
+                            adjustDecPos = adjustDecPos2 = 1;
                             d.Unit = "mV";
                             d.Unit1 = "Hz";
                             return "AC";
@@ -134,10 +153,13 @@ namespace VIc8145Lib
                             d.Unit = "°C";
                             d.Unit1 = "°F";
                             temperature = true;
+                            adjustDecPos = adjustDecPos2 = 1;
+                            d.ShowBar = false;
                             return "Temp Ext";
                         case 0xA:
                             d.Unit = "MHz";
                             d.Unit1 = "";
+                            adjustDecPos = adjustDecPos2 = -2;
                             return "Hi";
                     }
 
@@ -156,6 +178,15 @@ namespace VIc8145Lib
                         case 0xD:
                             d.Unit1 = "Hz";
                             d.Unit = "dBm";
+                            if (rawdata[2] == 0xc8)
+                            {
+                                adjustDecPos = 10;
+                            }
+                            else
+                            {
+                                adjustDecPos = 2;
+                            }
+                            adjustDecPos2 = 1;
                             return "";
                         case 0x6:
                             d.Unit = "mA";
@@ -200,7 +231,6 @@ namespace VIc8145Lib
 
         public static DisplayData ParseMainDisplayData(DisplayData displayData, byte[] data)
         {
-            //displayData.Unit = 
             ParseUnits(data, displayData);
             displayData.Prefixis = ParsePrefix(data);
             displayData.Hold = ParseHold(data);
@@ -236,6 +266,10 @@ namespace VIc8145Lib
 
         private static string ParseMainDisplayValue(byte[] data)
         {
+            if (data[1] == 0xe8)
+            {
+                adjustDecPos += 1;
+            }
             int decpos = GetRange(data) + adjustDecPos;
             var res = string.Empty;
             for (int i = 5; i < 10; i++)
@@ -268,56 +302,56 @@ namespace VIc8145Lib
         private static string AddDecimalPoint(byte res)
         {
             var result = "";
-            
+
             switch (res)
             {
 
                 case 0x80:
                     result = "0.50000";
                     break;
-                case 0x88 :
+                case 0x88:
                     result = "1.0000";
                     break;
-                case 0x90 :
+                case 0x90:
                     result = "2.0000";
                     break;
-                case 0x98 :
+                case 0x98:
                     result = "10.000";
                     break;
-                case 0xA0 :
+                case 0xA0:
                     result = "20.000";
                     break;
-                case 0xA8 :
+                case 0xA8:
                     result = "60.240";
                     break;
-                case 0xB0 :
+                case 0xB0:
                     result = "74.630";
                     break;
-                case 0xB8 :
+                case 0xB8:
                     result = "100.00";
                     break;
-                case 0xC0 :
+                case 0xC0:
                     result = "151.50";
                     break;
-                case 0xC8 :
+                case 0xC8:
                     result = "200.00";
                     break;
-                case 0xD0 :
+                case 0xD0:
                     result = "303.00";
                     break;
-                case 0xD8 :
+                case 0xD8:
                     result = "606.10";
                     break;
-               case 0xE0 :
+                case 0xE0:
                     result = "1.2500";
                     break;
-                case 0xE8 :
+                case 0xE8:
                     result = "1.6660";
                     break;
-                case 0xF0 :
+                case 0xF0:
                     result = "2.5000";
                     break;
-                case 0xF8 :
+                case 0xF8:
                     result = "5.0000";
                     break;
             }
@@ -328,10 +362,10 @@ namespace VIc8145Lib
         private static int GetRange(byte[] data)
         {
             int range = (data[2] & 0b0011_1000) >> 3;
-            if (temperature)
-            {
-                range++;                // Correct if temp. measurement
-            }
+            //if (temperature)
+            //{
+            //    range++;                // Correct if temp. measurement
+            //}
 
             if (resistance || generator)
             {
@@ -367,17 +401,23 @@ namespace VIc8145Lib
 
         private static string ParserSign(byte[] result)
         {
+            if (isAC)
+            {
+                return " ";
+            }
             switch ((result[4] & 0b01110000) >> 4)
             {
                 default:
                     return "+";
                 case 4:
-                    case 0:
+                case 0:
                     return " ";
                 case 5:
                 case 1:
                     return "-";
             }
+
+
         }
 
         public static PrefixEnum ParsePrefix(byte[] result)
@@ -426,12 +466,17 @@ namespace VIc8145Lib
 
         public static DisplayData ParseSecondDisplayData(DisplayData displayData, byte[] data)
         {
+
             int decpos = GetRange(data);
             if (temperature)
             {
                 decpos++;
             }
 
+            if (data[1] == 0xA0)
+            {
+                adjustDecPos2 -= 1;
+            }
             var res = string.Empty;
             for (int i = 5; i < 10; i++)
             {
@@ -447,7 +492,7 @@ namespace VIc8145Lib
                         break;
                 }
 
-                if (res.Length == decpos)
+                if (res.Length == decpos + adjustDecPos2)
                 {
                     res += ".";
                 }
@@ -455,7 +500,7 @@ namespace VIc8145Lib
 
             if (res == ".")
                 res = "";
-            
+
             displayData.Sign2nd = res == "" ? "" : ParserSign(data);
             if (displayData.Entities == EntitiesEnum.Diode)
             {
@@ -463,16 +508,20 @@ namespace VIc8145Lib
                 {
                     res = "Open";
                 }
-                else
+                else if (Convert.ToDecimal(displayData.MainDisplayValue) < 0.2M)
                 {
                     res = "SHRT";
+                }
+                else
+                {
+                    res = "----";
                 }
 
                 displayData.Sign2nd = "";
             }
             displayData.SecondDisplayValue = res;
-            
-            
+
+
             return displayData;
         }
 

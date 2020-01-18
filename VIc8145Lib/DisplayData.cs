@@ -14,7 +14,7 @@ namespace VIc8145Lib
         public string MainDisplayValue { get; set; }
         public string SecondDisplayValue { get; set; }
         public int BarValue  { get; set; }  
-        public bool BarIsPositive { get; set; }
+        public string BarSign { get; set; }
         public bool Rel { get; set; }
         public string MinMax { get; set; }
         public string Hold { get; set; }
@@ -28,5 +28,6 @@ namespace VIc8145Lib
 
         public byte[] RawData { get; set; }
         public string Select { get; set; }
+        public bool ShowBar { get; set; }
     }
 }

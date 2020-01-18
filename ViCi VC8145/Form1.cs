@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VIc8145Lib;
 using Vici8145Lib;
-
+using System.Windows.Forms.DataVisualization.Charting;
 namespace ViCi_VC8145
 {
     public partial class Form1 : Form
@@ -25,6 +25,7 @@ namespace ViCi_VC8145
         public Form1()
         {
             InitializeComponent();
+            panel1.Visible = false;
             this.workerDelegate = new WorkerUpdateDelegate(this.UpdateUi);
             workerThread = new Thread(new ThreadStart(this.DoWork));
             workerThread.Start();
@@ -37,11 +38,9 @@ namespace ViCi_VC8145
 
         private void UpdateUi(DisplayData measuredData)
         {
-            if (!MeterPanel.Visible)
-            {
-                MeterPanel.Visible = true;
-            }
-
+           
+                MeterPanel.Visible = !panel1.Visible;
+            
             lblSign.Text = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
 
@@ -82,8 +81,17 @@ namespace ViCi_VC8145
             }
 
             lblSelect.Text = measuredData.Select;
-            lblBarSign.Text = measuredData.BarIsPositive ? "" : "-";
-            progressBar1.Value = Math.Min(measuredData.BarValue, 21);
+            lblBarSign.Text = measuredData.Sign;
+            if (measuredData.ShowBar)
+            {
+                progressBar1.Visible = true;
+                progressBar1.Value = Math.Min(measuredData.BarValue, 21);
+            }
+            else
+            {
+                progressBar1.Visible = false;
+            }
+
             lblAuto.Text = measuredData.Auto;
             lblHold.Text = measuredData.Hold;
             lblRel.Text = measuredData.Rel ? "REL" : "";
@@ -123,9 +131,37 @@ namespace ViCi_VC8145
 
         private void Form1_Deactivate(object sender, EventArgs e)
         {
+            Quit();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Quit();
+
+        }
+
+        private void Quit()
+        {
             workerThread.Abort();
             lib.ClosePort();
+            Application.Exit();
+        }
 
+        private void graphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = true;
+            this.chart1.Series.Clear();
+            this.chart1.Titles.Add("Total Income");
+
+            Series series = this.chart1.Series.Add("Total Income");
+            series.ChartType = SeriesChartType.Spline;
+            series.Points.AddXY("September", 100);
+            series.Points.AddXY("Obtober", 300);
+            series.Points.AddXY("November", 800);
+            series.Points.AddXY("December", 200);
+            series.Points.AddXY("January", 600);
+            series.Points.AddXY("February", 400);
         }
     }
 }
+

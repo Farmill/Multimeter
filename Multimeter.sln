@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vici8145Lib", "VIc8145Lib\V
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViCi VC8145", "ViCi VC8145\ViCi VC8145.csproj", "{B51EFFF6-CA36-4E17-9D16-6719503BB6FF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{650D91DD-BF79-42AB-9DC4-BA66DB3BB399}"
+	ProjectSection(SolutionItems) = preProject
+		Beeper.bmp = Beeper.bmp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
