@@ -10,12 +10,7 @@ namespace Vici8145Lib
     public class Vici8145
     {
         
-        public List<string> getPorts()
-        {
-            return Serial.GetComports();
-        }
-
-        public bool Openport(string port)
+       public bool Openport(string port)
         {
             return Serial.OpenPort(port);
         }

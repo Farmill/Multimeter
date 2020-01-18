@@ -17,12 +17,6 @@ namespace VIc8145Lib
         private static readonly byte[] RespondingCommands    = {0x89, 0x8a, 0x8b};
 
         
-        public static List<string> GetComports() {
-            var result = new List<string>();
-
-            return result;
-        }
-
         public static void ClosePort()
         {
             _port.Close();

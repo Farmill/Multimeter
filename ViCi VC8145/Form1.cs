@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Configuration;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VIc8145Lib;
 using Vici8145Lib;
@@ -15,19 +9,20 @@ namespace ViCi_VC8145
 {
     public partial class Form1 : Form
     {
-        private Thread workerThread;
-        private WorkerUpdateDelegate workerDelegate;
+
+        private readonly Thread workerThread;
+        private readonly WorkerUpdateDelegate workerDelegate;
         private delegate void WorkerUpdateDelegate(DisplayData d);
 
-        private int interval = 200;
+        private readonly int interval = 200;
 
-        Vici8145Lib.Vici8145 lib = new Vici8145Lib.Vici8145();
+        readonly Vici8145 lib = new Vici8145Lib.Vici8145();
         public Form1()
         {
             InitializeComponent();
             panel1.Visible = false;
-            this.workerDelegate = new WorkerUpdateDelegate(this.UpdateUi);
-            workerThread = new Thread(new ThreadStart(this.DoWork));
+            this.workerDelegate = this.UpdateUi;
+            workerThread = new Thread(this.DoWork);
             workerThread.Start();
         }
 
@@ -38,8 +33,8 @@ namespace ViCi_VC8145
 
         private void UpdateUi(DisplayData measuredData)
         {
-           
-                MeterPanel.Visible = !panel1.Visible;
+
+            MeterPanel.Visible = true;
             
             lblSign.Text = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
@@ -53,7 +48,7 @@ namespace ViCi_VC8145
                 switch (measuredData.Prefixis)
                 {
                     case PrefixEnum.Kilo:
-                        lblUnitMain.Text = "k" + measuredData.Unit;
+                        lblUnitMain.Text = @"k" + measuredData.Unit;
                         break;
                     case PrefixEnum.Mega:
                         lblUnitMain.Text = "M" + measuredData.Unit;
@@ -86,6 +81,7 @@ namespace ViCi_VC8145
             {
                 progressBar1.Visible = true;
                 progressBar1.Value = Math.Min(measuredData.BarValue, 21);
+                trackBar1.Value = Math.Min(measuredData.BarValue, 21);
             }
             else
             {
@@ -100,14 +96,23 @@ namespace ViCi_VC8145
         }
         private void DoWork()
         {
-            var lib = new Vici8145Lib.Vici8145();
-            lib.Openport("COM10");
+            var appSettings = ConfigurationManager.AppSettings;
+            string result = appSettings["Comport"];
+            if (string.IsNullOrEmpty(result))
+            {
+                var frm = new Settings();
+                frm.Show();  
+                result = appSettings["Comport"];
+            }
+            
+            var vcLib = new Vici8145Lib.Vici8145();
+            vcLib.Openport(result);
             while (true)
             {
 
-                DisplayData b = lib.GetData(null, RespondingCommands.MainDisplayValue);
-                b = lib.GetData(b, RespondingCommands.SecondDisplayValue);
-                b = lib.GetData(b, RespondingCommands.AnalogeBarValue);
+                DisplayData b = vcLib.GetData(null, RespondingCommands.MainDisplayValue);
+                b = vcLib.GetData(b, RespondingCommands.SecondDisplayValue);
+                b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
                 if (workerThread.IsAlive)
                 {
                     try
@@ -150,17 +155,12 @@ namespace ViCi_VC8145
         private void graphToolStripMenuItem_Click(object sender, EventArgs e)
         {
             panel1.Visible = true;
-            this.chart1.Series.Clear();
-            this.chart1.Titles.Add("Total Income");
+            
+        }
 
-            Series series = this.chart1.Series.Add("Total Income");
-            series.ChartType = SeriesChartType.Spline;
-            series.Points.AddXY("September", 100);
-            series.Points.AddXY("Obtober", 300);
-            series.Points.AddXY("November", 800);
-            series.Points.AddXY("December", 200);
-            series.Points.AddXY("January", 600);
-            series.Points.AddXY("February", 400);
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           
         }
     }
 }
