@@ -49,15 +49,13 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.btnConnect = new System.Windows.Forms.Button();
             this.MeterPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // MeterPanel
             // 
-            this.MeterPanel.Controls.Add(this.trackBar1);
             this.MeterPanel.Controls.Add(this.lblBarSign);
             this.MeterPanel.Controls.Add(this.progressBar1);
             this.MeterPanel.Controls.Add(this.lblMax);
@@ -82,7 +80,7 @@
             // lblBarSign
             // 
             this.lblBarSign.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBarSign.Location = new System.Drawing.Point(23, 313);
+            this.lblBarSign.Location = new System.Drawing.Point(19, 296);
             this.lblBarSign.Name = "lblBarSign";
             this.lblBarSign.Size = new System.Drawing.Size(57, 62);
             this.lblBarSign.TabIndex = 13;
@@ -91,14 +89,15 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.BackColor = System.Drawing.Color.Blue;
-            this.progressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.progressBar1.Location = new System.Drawing.Point(98, 298);
+            this.progressBar1.BackColor = System.Drawing.Color.SlateGray;
+            this.progressBar1.ForeColor = System.Drawing.Color.Blue;
+            this.progressBar1.Location = new System.Drawing.Point(97, 327);
             this.progressBar1.MarqueeAnimationSpeed = 1;
             this.progressBar1.Maximum = 21;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(679, 21);
             this.progressBar1.Step = 1;
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 12;
             // 
             // lblMax
@@ -144,7 +143,7 @@
             // lblUnit2nd
             // 
             this.lblUnit2nd.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUnit2nd.Location = new System.Drawing.Point(729, 132);
+            this.lblUnit2nd.Location = new System.Drawing.Point(688, 115);
             this.lblUnit2nd.Name = "lblUnit2nd";
             this.lblUnit2nd.Size = new System.Drawing.Size(139, 51);
             this.lblUnit2nd.TabIndex = 7;
@@ -174,7 +173,7 @@
             // lblDisplay2nd
             // 
             this.lblDisplay2nd.Font = new System.Drawing.Font("DSEG7 Classic", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDisplay2nd.Location = new System.Drawing.Point(591, 66);
+            this.lblDisplay2nd.Location = new System.Drawing.Point(550, 49);
             this.lblDisplay2nd.Name = "lblDisplay2nd";
             this.lblDisplay2nd.Size = new System.Drawing.Size(292, 66);
             this.lblDisplay2nd.TabIndex = 4;
@@ -184,7 +183,7 @@
             // lblSign2nd
             // 
             this.lblSign2nd.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSign2nd.Location = new System.Drawing.Point(540, 61);
+            this.lblSign2nd.Location = new System.Drawing.Point(499, 44);
             this.lblSign2nd.Name = "lblSign2nd";
             this.lblSign2nd.Size = new System.Drawing.Size(57, 73);
             this.lblSign2nd.TabIndex = 3;
@@ -212,7 +211,7 @@
             // 
             // BrandModel
             // 
-            this.BrandModel.Location = new System.Drawing.Point(-8, 0);
+            this.BrandModel.Location = new System.Drawing.Point(-18, -9);
             this.BrandModel.Name = "BrandModel";
             this.BrandModel.Size = new System.Drawing.Size(899, 48);
             this.BrandModel.TabIndex = 0;
@@ -268,14 +267,16 @@
             this.panel1.TabIndex = 2;
             this.panel1.Visible = false;
             // 
-            // trackBar1
+            // btnConnect
             // 
-            this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(98, 325);
-            this.trackBar1.Maximum = 20;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(695, 45);
-            this.trackBar1.TabIndex = 14;
+            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnConnect.Location = new System.Drawing.Point(0, 20);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(658, 308);
+            this.btnConnect.TabIndex = 3;
+            this.btnConnect.Text = "Connect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -285,6 +286,7 @@
             this.Controls.Add(this.MeterPanel);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.btnConnect);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "ViCi VC 8145";
@@ -293,7 +295,6 @@
             this.MeterPanel.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -322,7 +323,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem graphToolStripMenuItem;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Button btnConnect;
     }
 }
 

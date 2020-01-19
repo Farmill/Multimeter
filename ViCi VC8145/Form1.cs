@@ -10,8 +10,8 @@ namespace ViCi_VC8145
     public partial class Form1 : Form
     {
 
-        private readonly Thread workerThread;
-        private readonly WorkerUpdateDelegate workerDelegate;
+        private Thread workerThread;
+        private WorkerUpdateDelegate workerDelegate;
         private delegate void WorkerUpdateDelegate(DisplayData d);
 
         private readonly int interval = 200;
@@ -20,10 +20,7 @@ namespace ViCi_VC8145
         public Form1()
         {
             InitializeComponent();
-            panel1.Visible = false;
-            this.workerDelegate = this.UpdateUi;
-            workerThread = new Thread(this.DoWork);
-            workerThread.Start();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -35,7 +32,7 @@ namespace ViCi_VC8145
         {
 
             MeterPanel.Visible = true;
-            
+            btnConnect.Visible = false;
             lblSign.Text = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
 
@@ -81,7 +78,6 @@ namespace ViCi_VC8145
             {
                 progressBar1.Visible = true;
                 progressBar1.Value = Math.Min(measuredData.BarValue, 21);
-                trackBar1.Value = Math.Min(measuredData.BarValue, 21);
             }
             else
             {
@@ -101,36 +97,50 @@ namespace ViCi_VC8145
             if (string.IsNullOrEmpty(result))
             {
                 var frm = new Settings();
-                frm.Show();  
+                frm.Show();
                 result = appSettings["Comport"];
             }
-            
-            var vcLib = new Vici8145Lib.Vici8145();
-            vcLib.Openport(result);
-            while (true)
-            {
 
-                DisplayData b = vcLib.GetData(null, RespondingCommands.MainDisplayValue);
-                b = vcLib.GetData(b, RespondingCommands.SecondDisplayValue);
-                b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
-                if (workerThread.IsAlive)
+            var vcLib = new Vici8145Lib.Vici8145();
+
+            try
+            {
+                vcLib.Openport(result);
+                
+                while (true)
                 {
-                    try
+
+                    DisplayData b = vcLib.GetData(null, RespondingCommands.MainDisplayValue);
+                    b = vcLib.GetData(b, RespondingCommands.SecondDisplayValue);
+                    b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
+                    if (workerThread.IsAlive)
                     {
-                        Invoke(workerDelegate, b);
+                        try
+                        {
+                            Invoke(workerDelegate, b);
+                        }
+                        catch (Exception e)
+                        {
+                            return;
+                        }
+
                     }
-                    catch (Exception e)
+                    else
                     {
                         return;
                     }
 
+                    Thread.Sleep(interval);
                 }
-                else
-                {
-                    return;
-                }
-                Thread.Sleep(interval);
             }
+            catch (Exception ex)
+            {
+                ErrorMesg mesg = new ErrorMesg();
+                mesg.Mesg = ex.Message;
+                mesg.ShowDialog();
+                
+            }
+            
 
         }
 
@@ -155,12 +165,34 @@ namespace ViCi_VC8145
         private void graphToolStripMenuItem_Click(object sender, EventArgs e)
         {
             panel1.Visible = true;
-            
+
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           
+            Settings form = new Settings();
+            form.Show();
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+               panel1.Visible = false;
+                this.workerDelegate = this.UpdateUi;
+                workerThread = new Thread(this.DoWork);
+                workerThread.Start();
+
+            }
+            catch (Exception ex)
+
+            {
+                ErrorMesg mesg = new ErrorMesg();
+                mesg.Mesg = ex.Message;
+                mesg.ShowDialog();
+            }
+
         }
     }
 }
