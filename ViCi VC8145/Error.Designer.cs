@@ -44,20 +44,20 @@
             // 
             // lblMesg
             // 
-            this.lblMesg.BackColor = System.Drawing.SystemColors.Window;
+            this.lblMesg.BackColor = System.Drawing.SystemColors.Menu;
             this.lblMesg.Location = new System.Drawing.Point(16, 7);
             this.lblMesg.Name = "lblMesg";
             this.lblMesg.Size = new System.Drawing.Size(285, 44);
             this.lblMesg.TabIndex = 1;
             // 
-            // Error
+            // ErrorMesg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(321, 102);
             this.Controls.Add(this.lblMesg);
             this.Controls.Add(this.button1);
-            this.Name = "Error";
+            this.Name = "ErrorMesg";
             this.Text = "Error";
             this.ResumeLayout(false);
 

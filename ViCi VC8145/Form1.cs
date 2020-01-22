@@ -32,7 +32,7 @@ namespace ViCi_VC8145
         {
 
             MeterPanel.Visible = true;
-            btnConnect.Visible = false;
+         
             lblSign.Text = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
 
@@ -157,14 +157,16 @@ namespace ViCi_VC8145
 
         private void Quit()
         {
-            workerThread.Abort();
+            workerThread?.Abort();
+
             lib.ClosePort();
             Application.Exit();
         }
 
         private void graphToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            panel1.Visible = true;
+            Logger logform = new Logger();
+            logform.ShowDialog();
 
         }
 
@@ -175,11 +177,11 @@ namespace ViCi_VC8145
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+       private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-               panel1.Visible = false;
+                panel1.Visible = false;
                 this.workerDelegate = this.UpdateUi;
                 workerThread = new Thread(this.DoWork);
                 workerThread.Start();
@@ -192,7 +194,6 @@ namespace ViCi_VC8145
                 mesg.Mesg = ex.Message;
                 mesg.ShowDialog();
             }
-
         }
     }
 }

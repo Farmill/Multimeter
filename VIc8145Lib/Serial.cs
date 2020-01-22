@@ -20,7 +20,10 @@ namespace VIc8145Lib
 
         public static void ClosePort()
         {
-            _port.Close();
+            if (_port != null && _port.IsOpen)
+            {
+                _port.Close();
+            }
         }
 
         public static bool OpenPort(string portId, int timeout = 5000)
