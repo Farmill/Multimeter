@@ -1,54 +1,36 @@
 ﻿using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Vici8145Lib;
 
 namespace VIc8145Lib
 {
     class ParseResult
     {
-        private static bool temperature = false;
-        private static bool resistance;
-        private static int adjustDecPos;
-        private static int adjustDecPos2;
-        private static bool generator;
-        private static bool isAC;
-        private static bool isOhm;
+        private static bool _temperature;
+        private static bool _resistance;
+        private static int _adjustDecPos;
+        private static int _adjustDecPos2;
+        private static bool _generator;
+        private static bool _isAc;
 
         public static void ParseUnits(byte[] toParse, DisplayData dispData)
         {
-            temperature = false;
-            resistance = false;
-            adjustDecPos = adjustDecPos2 = adjustDecPos2 = 0;
+            _temperature = false;
+            _resistance = false;
+            _adjustDecPos = _adjustDecPos2 = _adjustDecPos2 = 0;
             var mode = (toParse[1] & 0b0111_1000) >> 3;
-            var postfix = "";
 
             dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData, toParse);
             if (dispData.Select == "AC")
             {
-                isAC = true;
+                _isAc = true;
             }
-
-            if (dispData.Entities == EntitiesEnum.Resistance)
-            {
-                isOhm = true;
-            }
-
         }
 
         private static string ParseSelect(int select, int mode, DisplayData d, byte[] rawdata)
         {
-            generator = false;
-            resistance = false;
-            isAC = false;
+            _generator = false;
+            _resistance = false;
+            _isAc = false;
             d.ShowBar = true;
             d.Unit2 = "";
             switch (select)
@@ -79,8 +61,9 @@ namespace VIc8145Lib
                         case 0xC:
                             d.Unit1 = d.Unit = "Ω";
                             d.Unit2 = "Ω";
-                            resistance = true;
+                            _resistance = true;
                             d.Entities = EntitiesEnum.Resistance;
+                            AddPrefix(d);
                             return "";
                         case 0x9:
                             if (rawdata[2] != 0x98)
@@ -99,9 +82,9 @@ namespace VIc8145Lib
                             d.Unit = "°C";
                             d.Unit1 = "°F";
                             d.Entities = EntitiesEnum.Temp;
-                            temperature = true;
+                            _temperature = true;
                             d.ShowBar = false;
-                            adjustDecPos = adjustDecPos2 = 1;
+                            _adjustDecPos = _adjustDecPos2 = 1;
                             return "Temp";
                         case 0xA:
                             d.Entities = EntitiesEnum.Frequency;
@@ -110,10 +93,9 @@ namespace VIc8145Lib
                             d.ShowBar = false;
                             return "";
                         case 0x4:
-                            //adjustDecPos =adjustDecPos2= 1;
                             d.Unit = "Hz";
                             d.Unit1 = "Duty";
-                            generator = true;
+                            _generator = true;
                             d.Entities = EntitiesEnum.Generator;
                             return "Generator";
                         case 0xb:
@@ -136,7 +118,7 @@ namespace VIc8145Lib
                             d.Unit1 = "Hz";
                             return "AC";
                         case 0xD:
-                            adjustDecPos = adjustDecPos2 = 1;
+                            _adjustDecPos = _adjustDecPos2 = 1;
                             d.Unit = "mV";
                             d.Unit1 = "Hz";
                             return "AC";
@@ -152,14 +134,14 @@ namespace VIc8145Lib
                         case 0x8:
                             d.Unit = "°C";
                             d.Unit1 = "°F";
-                            temperature = true;
-                            adjustDecPos = adjustDecPos2 = 1;
+                            _temperature = true;
+                            _adjustDecPos = _adjustDecPos2 = 1;
                             d.ShowBar = false;
                             return "Temp Ext";
                         case 0xA:
                             d.Unit = "MHz";
                             d.Unit1 = "";
-                            adjustDecPos = adjustDecPos2 = -2;
+                            _adjustDecPos = _adjustDecPos2 = -2;
                             return "Hi";
                     }
 
@@ -178,15 +160,8 @@ namespace VIc8145Lib
                         case 0xD:
                             d.Unit1 = "Hz";
                             d.Unit = "dBm";
-                            if (rawdata[2] == 0xc8)
-                            {
-                                adjustDecPos = 10;
-                            }
-                            else
-                            {
-                                adjustDecPos = 2;
-                            }
-                            adjustDecPos2 = 1;
+                            _adjustDecPos = rawdata[2] == 0xc8 ? 10 : 2;
+                            _adjustDecPos2 = 1;
                             return "";
                         case 0x6:
                             d.Unit = "mA";
@@ -226,6 +201,32 @@ namespace VIc8145Lib
             }
 
             return "";
+        }
+
+        private static void AddPrefix(DisplayData displayData)
+        {
+            switch (displayData.Prefixis)
+            {
+                case PrefixEnum.Kilo:
+                    displayData.Unit = @"k" + displayData.Unit;
+                    break;
+                case PrefixEnum.Mega:
+                    displayData.Unit = "M" + displayData.Unit;
+                    break;
+                case PrefixEnum.Micro:
+                    displayData.Unit = "μ" + displayData.Unit;
+                    break;
+                case PrefixEnum.Milli:
+                    displayData.Unit = "m" + displayData.Unit;
+                    break;
+                case PrefixEnum.Pica:
+                    displayData.Unit = "p" + displayData.Unit;
+                    break;
+                default:
+                    displayData.Unit = displayData.Unit;
+                    break;
+            }
+
         }
 
 
@@ -268,9 +269,9 @@ namespace VIc8145Lib
         {
             if (data[1] == 0xe8)
             {
-                adjustDecPos += 1;
+                _adjustDecPos += 1;
             }
-            int decpos = GetRange(data) + adjustDecPos;
+            int decpos = GetRange(data) + _adjustDecPos;
             var res = string.Empty;
             for (int i = 5; i < 10; i++)
             {
@@ -292,7 +293,7 @@ namespace VIc8145Lib
                 }
             }
 
-            if (generator)
+            if (_generator)
             {
                 res = AddDecimalPoint(data[2]);
             }
@@ -367,7 +368,7 @@ namespace VIc8145Lib
             //    range++;                // Correct if temp. measurement
             //}
 
-            if (resistance || generator)
+            if (_resistance || _generator)
             {
                 switch (data[1] & 3)
                 {
@@ -401,7 +402,7 @@ namespace VIc8145Lib
 
         private static string ParserSign(byte[] result)
         {
-            if (isAC)
+            if (_isAc)
             {
                 return " ";
             }
@@ -468,14 +469,14 @@ namespace VIc8145Lib
         {
 
             int decpos = GetRange(data);
-            if (temperature)
+            if (_temperature)
             {
                 decpos++;
             }
 
             if (data[1] == 0xA0)
             {
-                adjustDecPos2 -= 1;
+                _adjustDecPos2 -= 1;
             }
             var res = string.Empty;
             for (int i = 5; i < 10; i++)
@@ -492,7 +493,7 @@ namespace VIc8145Lib
                         break;
                 }
 
-                if (res.Length == decpos + adjustDecPos2)
+                if (res.Length == decpos + _adjustDecPos2)
                 {
                     res += ".";
                 }
@@ -501,7 +502,7 @@ namespace VIc8145Lib
             if (res == ".")
                 res = "";
 
-            displayData.Sign2nd = res == "" ? "" : ParserSign(data);
+            displayData.Sign2Nd = res == "" ? "" : ParserSign(data);
             if (displayData.Entities == EntitiesEnum.Diode)
             {
                 if (Convert.ToDecimal(displayData.MainDisplayValue) > 2)
@@ -517,7 +518,7 @@ namespace VIc8145Lib
                     res = "----";
                 }
 
-                displayData.Sign2nd = "";
+                displayData.Sign2Nd = "";
             }
             displayData.SecondDisplayValue = res;
 

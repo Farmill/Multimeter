@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VIc8145Lib;
+﻿using VIc8145Lib;
 
 namespace Vici8145Lib
 {

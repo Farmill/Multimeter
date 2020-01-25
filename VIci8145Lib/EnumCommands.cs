@@ -31,15 +31,10 @@
         Frequency,
         Diode,
         Temp,
+        // ReSharper disable once UnusedMember.Global
         Conductance,
         Current,
         Generator
-    }
-
-    public enum VoltageEnum
-    {
-        DC,
-        AC
     }
 
     public enum PrefixEnum

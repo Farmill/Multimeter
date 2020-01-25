@@ -46,19 +46,26 @@ namespace VIc8145Lib
 
         private static void PortOnDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var sp = (SerialPort)sender;
-            byte read;
-            var index = 0;
-            do
+            try
             {
-                Bfr[index++] = read = (byte)sp.ReadByte();
-            } while (read != 0x0a && index < 90);
+                var sp = (SerialPort)sender;
+                byte read;
+                var index = 0;
+                do
+                {
+                    Bfr[index++] = read = (byte)sp.ReadByte();
+                } while (read != 0x0a && index < 90);
 
-            if (index > 90)
-                index = 0;
-            Bfr[index] = 0;
+                if (index > 90)
+                    index = 0;
+                Bfr[index] = 0;
 
-            _messageReceived.Set();
+                _messageReceived.Set();
+            }
+            catch
+            {
+            }
+            
         }
 
         public static void WriteNonrespondingCommand(NonRespondingCommands cmd)

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using VIc8145Lib;
 using Vici8145Lib;
-using System.Windows.Forms.DataVisualization.Charting;
+
 namespace ViCi_VC8145
 {
     public partial class Form1 : Form
@@ -13,10 +14,10 @@ namespace ViCi_VC8145
         private Thread workerThread;
         private WorkerUpdateDelegate workerDelegate;
         private delegate void WorkerUpdateDelegate(DisplayData d);
-
-        private readonly int interval = 200;
-
-        readonly Vici8145 lib = new Vici8145Lib.Vici8145();
+        public static int LogInterval = 400;
+        internal static string LogFilename = null;
+        private DateTime toWriteTime;
+        readonly Vici8145 lib = new Vici8145();
         public Form1()
         {
             InitializeComponent();
@@ -32,48 +33,16 @@ namespace ViCi_VC8145
         {
 
             MeterPanel.Visible = true;
-         
-            lblSign.Text = measuredData.Sign;
+
+            lblSign.Text        = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
+            lblSign2nd.Text     = measuredData.Sign2Nd;
+            lblDisplay2nd.Text  = measuredData.SecondDisplayValue;
+            lblUnitMain.Text    = measuredData.Unit;
+            lblUnit2nd.Text     = measuredData.SecondDisplayValue == "" ? "" : measuredData.Unit1;
+            lblSelect.Text      = measuredData.Select;
+            lblBarSign.Text     = measuredData.Sign;
 
-
-            lblSign2nd.Text = measuredData.Sign2nd;
-            lblDisplay2nd.Text = measuredData.SecondDisplayValue;
-
-            if (measuredData.Entities == EntitiesEnum.Resistance)
-            {
-                switch (measuredData.Prefixis)
-                {
-                    case PrefixEnum.Kilo:
-                        lblUnitMain.Text = @"k" + measuredData.Unit;
-                        break;
-                    case PrefixEnum.Mega:
-                        lblUnitMain.Text = "M" + measuredData.Unit;
-                        break;
-                    case PrefixEnum.Micro:
-                        lblUnitMain.Text = "μ" + measuredData.Unit;
-                        break;
-                    case PrefixEnum.Milli:
-                        lblUnitMain.Text = "m" + measuredData.Unit;
-                        break;
-                    case PrefixEnum.Pica:
-                        lblUnitMain.Text = "p" + measuredData.Unit;
-                        break;
-                    default:
-                        lblUnitMain.Text = measuredData.Unit;
-                        break;
-                }
-
-            }
-
-            else
-            {
-                lblUnitMain.Text = measuredData.Unit;
-                lblUnit2nd.Text = measuredData.SecondDisplayValue == "" ? "" : measuredData.Unit1;
-            }
-
-            lblSelect.Text = measuredData.Select;
-            lblBarSign.Text = measuredData.Sign;
             if (measuredData.ShowBar)
             {
                 progressBar1.Visible = true;
@@ -86,14 +55,16 @@ namespace ViCi_VC8145
 
             lblAuto.Text = measuredData.Auto;
             lblHold.Text = measuredData.Hold;
-            lblRel.Text = measuredData.Rel ? "REL" : "";
-            lblMax.Text = measuredData.MinMax;
+            lblRel.Text  = measuredData.Rel ? "REL" : "";
+            lblMax.Text  = measuredData.MinMax;
 
         }
         private void DoWork()
         {
+            StreamWriter writer = null;
             var appSettings = ConfigurationManager.AppSettings;
-            string result = appSettings["Comport"];
+            string result   = appSettings["Comport"];
+
             if (string.IsNullOrEmpty(result))
             {
                 var frm = new Settings();
@@ -101,12 +72,21 @@ namespace ViCi_VC8145
                 result = appSettings["Comport"];
             }
 
-            var vcLib = new Vici8145Lib.Vici8145();
+            TimeSpan ts = new TimeSpan(0, 0, 0, LogInterval / 1000, LogInterval % 1000);
+
+
+            toWriteTime = DateTime.Now;
+            if (LogFilename != null)
+            {
+                writer = new StreamWriter(LogFilename);
+            }
+
+            var vcLib = new Vici8145();
 
             try
             {
                 vcLib.Openport(result);
-                
+
                 while (true)
                 {
 
@@ -118,8 +98,9 @@ namespace ViCi_VC8145
                         try
                         {
                             Invoke(workerDelegate, b);
+                            WriteDataToFile(writer, b, ts);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             return;
                         }
@@ -129,30 +110,40 @@ namespace ViCi_VC8145
                     {
                         return;
                     }
-
-                    Thread.Sleep(interval);
                 }
             }
             catch (Exception ex)
             {
-                ErrorMesg mesg = new ErrorMesg();
-                mesg.Mesg = ex.Message;
-                mesg.ShowDialog();
-                
+                writer?.Close();
+
+                if (!ex.Message.Contains("abort"))
+                {
+                    ErrorMesg mesg = new ErrorMesg { Mesg = ex.Message };
+                    mesg.ShowDialog();
+                }
             }
-            
+
 
         }
 
-        private void Form1_Deactivate(object sender, EventArgs e)
+        private void WriteDataToFile(StreamWriter writer, DisplayData b, TimeSpan ts)
         {
-            Quit();
+            if (toWriteTime <= DateTime.Now)
+            {
+                if (writer != null)
+                {
+                    writer.WriteLine($"{DateTime.Now:HH:mm:ss.ffff},{b.Sign}{b.MainDisplayValue},{b.Unit1},{b.Sign2Nd}{b.SecondDisplayValue},{b.Unit2}");
+                    writer.Flush();
+                }
+
+                toWriteTime = DateTime.Now + ts;
+            }
         }
+
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Quit();
-
         }
 
         private void Quit()
@@ -177,21 +168,40 @@ namespace ViCi_VC8145
 
         }
 
-       private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             try
             {
-                panel1.Visible = false;
-                this.workerDelegate = this.UpdateUi;
-                workerThread = new Thread(this.DoWork);
-                workerThread.Start();
+                var menuitem = (ToolStripMenuItem)sender;
+                if (menuitem != null)
+                {
+                    if (menuitem.Text.Contains("Start"))
+                    {
+                        menuitem.Text = @"&Stop";
+                        panel1.Visible = false;
+                        this.workerDelegate = this.UpdateUi;
+                        workerThread = new Thread(this.DoWork);
+                        workerThread.Start();
+                    }
+                    else
+                    {
+                        workerThread?.Abort();
+                        lib.ClosePort();
+                        menuitem.Text = @"&Start";
+                    }
+
+                }
+                else
+                {
+                    throw new Exception("Menu error");
+                }
 
             }
             catch (Exception ex)
 
             {
-                ErrorMesg mesg = new ErrorMesg();
-                mesg.Mesg = ex.Message;
+                ErrorMesg mesg = new ErrorMesg {Mesg = ex.Message};
                 mesg.ShowDialog();
             }
         }

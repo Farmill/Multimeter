@@ -51,8 +51,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="VIc8145Lib\Vici8145Lib.csproj">
-      <Project>{68fd4782-e1f7-46f8-abf2-72c5bccde201}</Project>
+    <ProjectReference Include="VIci8145Lib\Vici8145Lib.csproj">
+      <Project>{68FD4782-E1F7-46F8-ABF2-72C5BCCDE201}</Project>
       <Name>Vici8145Lib</Name>
     </ProjectReference>
   </ItemGroup>

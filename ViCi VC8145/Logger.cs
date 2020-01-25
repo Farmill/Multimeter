@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ViCi_VC8145
@@ -16,6 +9,7 @@ namespace ViCi_VC8145
         {
             InitializeComponent();
             lblError.Visible = false;
+            txtInterval.Text = @"1000";
         }
 
         private void lblError_Click(object sender, EventArgs e)
@@ -38,15 +32,23 @@ namespace ViCi_VC8145
                 lblError.Visible = true;
                 txtInterval.Text = @"400";
             }
+
+            Form1.LogInterval = Convert.ToInt32(txtInterval.Text);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 1000; i++)
+            if (txtFile.Text != "")
             {
-                listBox1.Items.Add($"Dit is string {i}");
-                listBox1.SelectedIndex = i;
+                Form1.LogFilename = txtFile.Text;
             }
+            Hide();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Hide();
+            Form1.LogFilename = "";
+        } 
     }
 }
