@@ -14,10 +14,11 @@ namespace VIc8145Lib
 
         public static void ParseUnits(byte[] toParse, DisplayData dispData)
         {
-            _temperature = false;
-            _resistance = false;
+            _temperature  = false;
+            _resistance   = false;
+            _isAc         = false;
             _adjustDecPos = _adjustDecPos2 = _adjustDecPos2 = 0;
-            var mode = (toParse[1] & 0b0111_1000) >> 3;
+            var mode      = (toParse[1] & 0b0111_1000) >> 3;
 
             dispData.Select = ParseSelect(toParse[1] & 3, mode, dispData, toParse);
             if (dispData.Select == "AC")
@@ -28,22 +29,22 @@ namespace VIc8145Lib
 
         private static string ParseSelect(int select, int mode, DisplayData d, byte[] rawdata)
         {
-            _generator = false;
+            _generator  = false;
             _resistance = false;
-            _isAc = false;
-            d.ShowBar = true;
-            d.Unit2 = "";
+            _isAc       = false;
+            d.ShowBar   = true;
+            d.Unit2     = "";
             switch (select)
             {
                 case 00:
                     switch (mode)
                     {
                         case 0xE:
-                            d.Unit1 = d.Unit = "V";
+                            d.Unit1    = d.Unit = "V";
                             d.Entities = EntitiesEnum.Voltage;
                             return "DC";
                         case 0xF:
-                            d.Unit1 = d.Unit = "V";
+                            d.Unit1    = d.Unit = "V";
                             d.Entities = EntitiesEnum.Voltage;
                             return "AC";
                         case 0xD:
@@ -74,33 +75,33 @@ namespace VIc8145Lib
                             {
                                 d.Unit1 = d.Unit = "µF";
                             }
-                            d.ShowBar = false;
+                            d.ShowBar  = false;
                             d.Entities = EntitiesEnum.Capacity;
 
                             return "Capacitor";
                         case 0x8:
-                            d.Unit = "°C";
-                            d.Unit1 = "°F";
-                            d.Entities = EntitiesEnum.Temp;
-                            _temperature = true;
-                            d.ShowBar = false;
+                            d.Unit        = "°C";
+                            d.Unit1       = "°F";
+                            d.Entities    = EntitiesEnum.Temp;
+                            _temperature  = true;
+                            d.ShowBar     = false;
                             _adjustDecPos = _adjustDecPos2 = 1;
                             return "Temp";
                         case 0xA:
                             d.Entities = EntitiesEnum.Frequency;
-                            d.Unit = "Hz";
-                            d.Unit1 = "% duty";
-                            d.ShowBar = false;
+                            d.Unit     = "Hz";
+                            d.Unit1    = "% duty";
+                            d.ShowBar  = false;
                             return "";
                         case 0x4:
-                            d.Unit = "Hz";
-                            d.Unit1 = "Duty";
+                            d.Unit     = "Hz";
+                            d.Unit1    = "Duty";
                             _generator = true;
                             d.Entities = EntitiesEnum.Generator;
                             return "Generator";
                         case 0xb:
-                            d.Unit = "V";
-                            d.Unit1 = "";
+                            d.Unit     = "V";
+                            d.Unit1    = "";
                             d.Entities = EntitiesEnum.Diode;
                             return "Diode";
                     }
@@ -110,17 +111,19 @@ namespace VIc8145Lib
                     switch (mode)
                     {
                         case 0xE:
-                            d.Unit = "V";
+                            d.Unit  = "V";
                             d.Unit1 = "Hz";
+                            _adjustDecPos2 = 1;
                             return "AC+DC";
                         case 0xF:
-                            d.Unit = "V";
-                            d.Unit1 = "Hz";
+                            _adjustDecPos2 = 1;
+                            d.Unit         = "V";
+                            d.Unit1        = "Hz";
                             return "AC";
                         case 0xD:
                             _adjustDecPos = _adjustDecPos2 = 1;
-                            d.Unit = "mV";
-                            d.Unit1 = "Hz";
+                            d.Unit        = "mV";
+                            d.Unit1       = "Hz";
                             return "AC";
                         case 0x6:
                             d.Unit = "mA";
@@ -132,15 +135,15 @@ namespace VIc8145Lib
                             d.Unit = ">>";
                             return "";
                         case 0x8:
-                            d.Unit = "°C";
-                            d.Unit1 = "°F";
-                            _temperature = true;
+                            d.Unit        = "°C";
+                            d.Unit1       = "°F";
+                            _temperature  = true;
                             _adjustDecPos = _adjustDecPos2 = 1;
-                            d.ShowBar = false;
+                            d.ShowBar     = false;
                             return "Temp Ext";
                         case 0xA:
-                            d.Unit = "MHz";
-                            d.Unit1 = "";
+                            d.Unit        = "MHz";
+                            d.Unit1       = "";
                             _adjustDecPos = _adjustDecPos2 = -2;
                             return "Hi";
                     }
@@ -152,10 +155,12 @@ namespace VIc8145Lib
                         case 0xE:
                             d.Unit1 = "Hz";
                             d.Unit = "dBm";
+                            _adjustDecPos2 = 1;
                             return "";
                         case 0xf:
                             d.Unit1 = "Hz";
                             d.Unit = "dBm";
+                            _adjustDecPos2 = 1;
                             return "AC";
                         case 0xD:
                             d.Unit1 = "Hz";

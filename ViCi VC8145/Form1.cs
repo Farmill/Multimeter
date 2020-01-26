@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -14,10 +16,11 @@ namespace ViCi_VC8145
         private Thread workerThread;
         private WorkerUpdateDelegate workerDelegate;
         private delegate void WorkerUpdateDelegate(DisplayData d);
-        public static int LogInterval = 400;
+        public static int LogInterval      = 400;
         internal static string LogFilename = null;
         private DateTime toWriteTime;
         readonly Vici8145 lib = new Vici8145();
+        NameValueCollection appSettings = ConfigurationManager.AppSettings;
         public Form1()
         {
             InitializeComponent();
@@ -26,14 +29,26 @@ namespace ViCi_VC8145
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            lblSign.Text        = "";
+            lblMainDisplay.Text = "";
+            lblSign2nd.Text     = "";
+            lblDisplay2nd.Text  = "";
+            lblUnitMain.Text    = "";
+            lblUnit2nd.Text     = "";
+            lblSelect.Text      = "";
+            lblBarSign.Text     = "";
+            progressBar1.Visible = false;
+            lblAuto.Text = "";
+            lblHold.Text = "";
+            lblRel.Text  = "";
+            lblMax.Text  = "";
+            var result =  appSettings["Slidercolor"];
+            progressBar1.ForeColor = result != null ? Color.FromName(result) : Color.Blue;
         }
 
         private void UpdateUi(DisplayData measuredData)
         {
-
-            MeterPanel.Visible = true;
-
+            label1.Visible = false;
             lblSign.Text        = measuredData.Sign;
             lblMainDisplay.Text = measuredData.MainDisplayValue;
             lblSign2nd.Text     = measuredData.Sign2Nd;
@@ -62,7 +77,7 @@ namespace ViCi_VC8145
         private void DoWork()
         {
             StreamWriter writer = null;
-            var appSettings = ConfigurationManager.AppSettings;
+            
             string result   = appSettings["Comport"];
 
             if (string.IsNullOrEmpty(result))
@@ -86,30 +101,30 @@ namespace ViCi_VC8145
             try
             {
                 vcLib.Openport(result);
-
+                DisplayData b = new DisplayData();
                 while (true)
                 {
-
-                    DisplayData b = vcLib.GetData(null, RespondingCommands.MainDisplayValue);
-                    b = vcLib.GetData(b, RespondingCommands.SecondDisplayValue);
                     b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
-                    if (workerThread.IsAlive)
-                    {
-                        try
-                        {
-                            Invoke(workerDelegate, b);
-                            WriteDataToFile(writer, b, ts);
-                        }
-                        catch (Exception)
-                        {
-                            return;
-                        }
-
-                    }
-                    else
-                    {
+                    if (!DisplData(b, writer, ts))
                         return;
-                    }
+
+                    b = vcLib.GetData(b, RespondingCommands.MainDisplayValue);
+                    if (!DisplData(b, writer, ts))
+                        return;
+
+                    b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
+                    
+                    if (!DisplData(b, writer, ts))
+                        return;
+
+                    b = vcLib.GetData(b, RespondingCommands.SecondDisplayValue);
+                    if (!DisplData(b, writer, ts))
+                        return;
+
+                    b = vcLib.GetData(b, RespondingCommands.AnalogeBarValue);
+                    if (!DisplData(b, writer, ts))
+                        return;
+                    
                 }
             }
             catch (Exception ex)
@@ -124,6 +139,28 @@ namespace ViCi_VC8145
             }
 
 
+        }
+
+        private bool DisplData(DisplayData b, StreamWriter writer, TimeSpan ts)
+        {
+            if (workerThread.IsAlive)
+            {
+                try
+                {
+                    Invoke(workerDelegate, b);
+                    WriteDataToFile(writer, b, ts);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void WriteDataToFile(StreamWriter writer, DisplayData b, TimeSpan ts)
@@ -164,13 +201,16 @@ namespace ViCi_VC8145
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Settings form = new Settings();
-            form.Show();
+            form.ShowDialog();
+            appSettings = ConfigurationManager.AppSettings;
 
+            var result =  appSettings["Slidercolor"];
+            progressBar1.ForeColor = result != null ? Color.FromName(result) : Color.Blue;
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            label1.Visible = true;
             try
             {
                 var menuitem = (ToolStripMenuItem)sender;
@@ -178,11 +218,11 @@ namespace ViCi_VC8145
                 {
                     if (menuitem.Text.Contains("Start"))
                     {
-                        menuitem.Text = @"&Stop";
-                        panel1.Visible = false;
+                        menuitem.Text       = @"&Stop";
                         this.workerDelegate = this.UpdateUi;
-                        workerThread = new Thread(this.DoWork);
+                        workerThread        = new Thread(this.DoWork);
                         workerThread.Start();
+                        MeterPanel.Visible = true;
                     }
                     else
                     {

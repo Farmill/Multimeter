@@ -99,7 +99,7 @@
             // 
             this.btnOpenFileDialog.Location = new System.Drawing.Point(292, 32);
             this.btnOpenFileDialog.Name = "btnOpenFileDialog";
-            this.btnOpenFileDialog.Size = new System.Drawing.Size(32, 20);
+            this.btnOpenFileDialog.Size = new System.Drawing.Size(32, 35);
             this.btnOpenFileDialog.TabIndex = 6;
             this.btnOpenFileDialog.Text = "...";
             this.btnOpenFileDialog.UseVisualStyleBackColor = true;

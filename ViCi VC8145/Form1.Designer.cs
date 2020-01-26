@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.MeterPanel = new System.Windows.Forms.Panel();
             this.lblBarSign = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -49,13 +50,14 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.MeterPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // MeterPanel
             // 
+            this.MeterPanel.Controls.Add(this.label1);
             this.MeterPanel.Controls.Add(this.lblBarSign);
             this.MeterPanel.Controls.Add(this.progressBar1);
             this.MeterPanel.Controls.Add(this.lblMax);
@@ -73,9 +75,8 @@
             this.MeterPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MeterPanel.Location = new System.Drawing.Point(12, 42);
             this.MeterPanel.Name = "MeterPanel";
-            this.MeterPanel.Size = new System.Drawing.Size(863, 413);
+            this.MeterPanel.Size = new System.Drawing.Size(791, 413);
             this.MeterPanel.TabIndex = 0;
-            this.MeterPanel.Visible = false;
             // 
             // lblBarSign
             // 
@@ -89,7 +90,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.BackColor = System.Drawing.Color.SlateGray;
+            this.progressBar1.BackColor = System.Drawing.SystemColors.Control;
             this.progressBar1.ForeColor = System.Drawing.Color.Blue;
             this.progressBar1.Location = new System.Drawing.Point(97, 327);
             this.progressBar1.MarqueeAnimationSpeed = 1;
@@ -104,7 +105,7 @@
             // 
             this.lblMax.AutoSize = true;
             this.lblMax.ForeColor = System.Drawing.Color.Red;
-            this.lblMax.Location = new System.Drawing.Point(408, 66);
+            this.lblMax.Location = new System.Drawing.Point(309, 66);
             this.lblMax.Name = "lblMax";
             this.lblMax.Size = new System.Drawing.Size(92, 31);
             this.lblMax.TabIndex = 11;
@@ -114,7 +115,7 @@
             // 
             this.lblHold.AutoSize = true;
             this.lblHold.ForeColor = System.Drawing.Color.Red;
-            this.lblHold.Location = new System.Drawing.Point(137, 66);
+            this.lblHold.Location = new System.Drawing.Point(113, 66);
             this.lblHold.Name = "lblHold";
             this.lblHold.Size = new System.Drawing.Size(92, 31);
             this.lblHold.TabIndex = 10;
@@ -124,7 +125,7 @@
             // 
             this.lblRel.AutoSize = true;
             this.lblRel.ForeColor = System.Drawing.Color.Red;
-            this.lblRel.Location = new System.Drawing.Point(280, 66);
+            this.lblRel.Location = new System.Drawing.Point(211, 66);
             this.lblRel.Name = "lblRel";
             this.lblRel.Size = new System.Drawing.Size(92, 31);
             this.lblRel.TabIndex = 9;
@@ -143,7 +144,7 @@
             // lblUnit2nd
             // 
             this.lblUnit2nd.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUnit2nd.Location = new System.Drawing.Point(688, 115);
+            this.lblUnit2nd.Location = new System.Drawing.Point(622, 117);
             this.lblUnit2nd.Name = "lblUnit2nd";
             this.lblUnit2nd.Size = new System.Drawing.Size(139, 51);
             this.lblUnit2nd.TabIndex = 7;
@@ -173,7 +174,7 @@
             // lblDisplay2nd
             // 
             this.lblDisplay2nd.Font = new System.Drawing.Font("DSEG7 Classic", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDisplay2nd.Location = new System.Drawing.Point(550, 49);
+            this.lblDisplay2nd.Location = new System.Drawing.Point(484, 51);
             this.lblDisplay2nd.Name = "lblDisplay2nd";
             this.lblDisplay2nd.Size = new System.Drawing.Size(292, 66);
             this.lblDisplay2nd.TabIndex = 4;
@@ -183,7 +184,7 @@
             // lblSign2nd
             // 
             this.lblSign2nd.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSign2nd.Location = new System.Drawing.Point(499, 44);
+            this.lblSign2nd.Location = new System.Drawing.Point(433, 46);
             this.lblSign2nd.Name = "lblSign2nd";
             this.lblSign2nd.Size = new System.Drawing.Size(57, 73);
             this.lblSign2nd.TabIndex = 3;
@@ -211,9 +212,9 @@
             // 
             // BrandModel
             // 
-            this.BrandModel.Location = new System.Drawing.Point(-18, -9);
+            this.BrandModel.Location = new System.Drawing.Point(-18, -15);
             this.BrandModel.Name = "BrandModel";
-            this.BrandModel.Size = new System.Drawing.Size(899, 48);
+            this.BrandModel.Size = new System.Drawing.Size(809, 48);
             this.BrandModel.TabIndex = 0;
             this.BrandModel.Text = "ViCi VC8145 companion";
             this.BrandModel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -226,7 +227,7 @@
             this.graphToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(887, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(803, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -267,22 +268,24 @@
             this.graphToolStripMenuItem.Text = "&Logger";
             this.graphToolStripMenuItem.Click += new System.EventHandler(this.graphToolStripMenuItem_Click);
             // 
-            // panel1
+            // label1
             // 
-            this.panel1.Location = new System.Drawing.Point(19, 355);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(835, 100);
-            this.panel1.TabIndex = 2;
-            this.panel1.Visible = false;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(240, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(293, 31);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Opening the com port";
+            this.label1.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(887, 467);
+            this.ClientSize = new System.Drawing.Size(803, 467);
             this.Controls.Add(this.MeterPanel);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "ViCi VC 8145";
@@ -318,8 +321,8 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem graphToolStripMenuItem;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
     }
 }
 

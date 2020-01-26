@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViCi VC8145", "ViCi VC8145\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{650D91DD-BF79-42AB-9DC4-BA66DB3BB399}"
 	ProjectSection(SolutionItems) = preProject
-		Beeper.bmp = Beeper.bmp
+		Icon1.ico = Icon1.ico
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vici8145Lib", "VIci8145Lib\Vici8145Lib.csproj", "{68FD4782-E1F7-46F8-ABF2-72C5BCCDE201}"
