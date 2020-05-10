@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Drawing;
@@ -10,7 +11,7 @@ using Vici8145Lib;
 
 namespace ViCi_VC8145
 {
-    public partial class Form1 : Form
+    public partial class Vici : Form
     {
 
         private Thread workerThread;
@@ -21,10 +22,9 @@ namespace ViCi_VC8145
         private DateTime toWriteTime;
         readonly Vici8145 lib = new Vici8145();
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
-        public Form1()
+        public Vici()
         {
             InitializeComponent();
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -43,7 +43,14 @@ namespace ViCi_VC8145
             lblRel.Text  = "";
             lblMax.Text  = "";
             var result =  appSettings["Slidercolor"];
-            progressBar1.ForeColor = result != null ? Color.FromName(result) : Color.Blue;
+            if (result != null)
+            {
+                GetColor(progressBar1, result);
+            }
+            else
+            {
+                progressBar1.ForeColor = Color.Blue;
+            }
         }
 
         private void UpdateUi(DisplayData measuredData)
@@ -70,10 +77,11 @@ namespace ViCi_VC8145
 
             lblAuto.Text = measuredData.Auto;
             lblHold.Text = measuredData.Hold;
-            lblRel.Text  = measuredData.Rel ? "REL" : "";
+            lblRel.Text = measuredData.Rel;
             lblMax.Text  = measuredData.MinMax;
 
         }
+
         private void DoWork()
         {
             StreamWriter writer = null;
@@ -83,7 +91,7 @@ namespace ViCi_VC8145
             if (string.IsNullOrEmpty(result))
             {
                 var frm = new Settings();
-                frm.Show();
+                frm.ShowDialog();
                 result = appSettings["Comport"];
             }
 
@@ -91,7 +99,7 @@ namespace ViCi_VC8145
 
 
             toWriteTime = DateTime.Now;
-            if (LogFilename != null)
+            if (!string.IsNullOrEmpty(LogFilename))
             {
                 writer = new StreamWriter(LogFilename);
             }
@@ -205,7 +213,22 @@ namespace ViCi_VC8145
             appSettings = ConfigurationManager.AppSettings;
 
             var result =  appSettings["Slidercolor"];
-            progressBar1.ForeColor = result != null ? Color.FromName(result) : Color.Blue;
+
+            if (result != null)
+            {
+                GetColor(progressBar1, result);
+            }
+            else
+            {
+                progressBar1.ForeColor = Color.Blue;
+            }
+        }
+
+        private void GetColor(ProgressBar progressBar, string result)
+        {
+            var colorspecs = result.Split(',');
+            progressBar.ForeColor = Color.FromArgb(Convert.ToInt32(colorspecs[0]),
+                Convert.ToInt32(colorspecs[1]), Convert.ToInt32(colorspecs[2]), Convert.ToInt32(colorspecs[3]));
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)

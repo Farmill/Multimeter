@@ -33,14 +33,14 @@ namespace ViCi_VC8145
                 txtInterval.Text = @"400";
             }
 
-            Form1.LogInterval = Convert.ToInt32(txtInterval.Text);
+            Vici.LogInterval = Convert.ToInt32(txtInterval.Text);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (txtFile.Text != "")
             {
-                Form1.LogFilename = txtFile.Text;
+                Vici.LogFilename = txtFile.Text;
             }
             Hide();
         }
@@ -48,7 +48,7 @@ namespace ViCi_VC8145
         private void button1_Click(object sender, EventArgs e)
         {
             Hide();
-            Form1.LogFilename = "";
+            Vici.LogFilename = "";
         } 
     }
 }

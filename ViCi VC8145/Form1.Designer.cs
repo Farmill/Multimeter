@@ -1,6 +1,6 @@
 ﻿namespace ViCi_VC8145
 {
-    partial class Form1
+    partial class Vici
     {
         /// <summary>
         /// Required designer variable.
@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Vici));
             this.MeterPanel = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblBarSign = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblMax = new System.Windows.Forms.Label();
@@ -50,7 +51,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
             this.MeterPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -77,6 +77,16 @@
             this.MeterPanel.Name = "MeterPanel";
             this.MeterPanel.Size = new System.Drawing.Size(791, 413);
             this.MeterPanel.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(240, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(293, 31);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Opening the com port";
+            this.label1.Visible = false;
             // 
             // lblBarSign
             // 
@@ -268,17 +278,7 @@
             this.graphToolStripMenuItem.Text = "&Logger";
             this.graphToolStripMenuItem.Click += new System.EventHandler(this.graphToolStripMenuItem_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(240, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(293, 31);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Opening the com port";
-            this.label1.Visible = false;
-            // 
-            // Form1
+            // Vici
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -287,7 +287,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "Vici";
             this.Text = "ViCi VC 8145";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MeterPanel.ResumeLayout(false);

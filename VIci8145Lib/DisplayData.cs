@@ -9,7 +9,7 @@ namespace VIc8145Lib
         public string MainDisplayValue { get; set; }
         public string SecondDisplayValue { get; set; }
         public int BarValue  { get; set; }
-        public bool Rel { get; set; }
+        public string Rel { get; set; }
         public string MinMax { get; set; }
         public string Hold { get; set; }
         public EntitiesEnum Entities { get; set; }
