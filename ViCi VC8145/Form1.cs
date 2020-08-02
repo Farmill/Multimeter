@@ -99,7 +99,7 @@ namespace ViCi_VC8145
 
 
             toWriteTime = DateTime.Now;
-            if (LogFilename != null)
+            if (!string.IsNullOrEmpty(LogFilename))
             {
                 writer = new StreamWriter(LogFilename);
             }
