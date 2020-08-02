@@ -24,7 +24,14 @@ namespace ViCi_VC8145
             string result = appSettings["Comport"];
             comboBox1.Text = result;
             result = appSettings["Slidercolor"];
-            color =  progressBar1.ForeColor = Color.FromName(result);
+            if (result != null)
+                        {
+                GetColor(progressBar1, result);
+            }
+            else
+            {
+                progressBar1.ForeColor = Color.Blue;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -43,13 +50,15 @@ namespace ViCi_VC8145
                     break;
             }
 
+            var colorSpecs = $"{color.A},{color.B},{color.G},{color.R}";
+
             switch (settings["Slidercolor"])
             {
                 case null:
-                    settings.Add("Slidercolor", color.Name);
+                    settings.Add("Slidercolor", colorSpecs );
                     break;
                 default:
-                    settings["Slidercolor"].Value = color.Name;
+                    settings["Slidercolor"].Value = colorSpecs;
                     break;
             }
             configFile.Save(ConfigurationSaveMode.Modified);
@@ -68,6 +77,13 @@ namespace ViCi_VC8145
                     progressBar1.ForeColor = color;
                 }
             }
+        }
+
+        private void GetColor(ProgressBar progressBar, string result)
+        {
+            var colorspecs = result.Split(',');
+            progressBar.ForeColor = Color.FromArgb(Convert.ToInt32(colorspecs[0]),
+                Convert.ToInt32(colorspecs[1]), Convert.ToInt32(colorspecs[2]), Convert.ToInt32(colorspecs[3]));
         }
     }
 }
